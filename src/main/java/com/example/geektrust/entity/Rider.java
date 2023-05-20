@@ -15,4 +15,7 @@ public class Rider extends User{
     public Rider(String id, Integer xCoordinate, Integer yCoordinate) {
         super(id, xCoordinate, yCoordinate);
     }
+
+
+
 }

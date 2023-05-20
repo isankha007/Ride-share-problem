@@ -35,4 +35,13 @@ public abstract class User {
     public void setyCoordinate(Integer yCoordinate) {
         this.yCoordinate = yCoordinate;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", xCoordinate=" + xCoordinate +
+                ", yCoordinate=" + yCoordinate +
+                '}';
+    }
 }

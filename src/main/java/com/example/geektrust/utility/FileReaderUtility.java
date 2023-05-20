@@ -15,7 +15,7 @@ public class FileReaderUtility {
     }
 
     public FileReaderUtility(String filePath) {
-        filePath = filePath;
+        this.filePath = filePath;
     }
 
 

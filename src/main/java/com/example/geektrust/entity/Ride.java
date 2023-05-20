@@ -11,6 +11,7 @@ public class Ride {
 
     private Driver driver;
 
+
     private Integer timeTaken;
 
     private double amount;
