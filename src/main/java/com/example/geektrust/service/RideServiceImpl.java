@@ -173,11 +173,17 @@ public class RideServiceImpl implements RideShareService{
         int y= Integer.parseInt(token.get(2));
         Integer timeTaken= Integer.valueOf((token.get(3)));
         StringBuilder sbOutput=new StringBuilder();
+        //System.out.println("*********** Stopped command *****"+riderMap+"  ++++ "+rideId);
         if(!rideMap.containsKey(rideId)){
             System.out.println("INVALID_RIDE");
             return Optional.of(new Ride());
         }else {
+
             Ride ride = rideMap.get(rideId);
+            if(ride.getRideStatus().equals(RideStatus.RIDE_STOPPED)){
+                System.out.println("INVALID_RIDE");
+                return Optional.of(new Ride());
+            }
             ride.setRideStatus(RideStatus.RIDE_STOPPED);
             ride.setxCoordinate(x);
             ride.setyCoordinate(y);
@@ -194,6 +200,7 @@ public class RideServiceImpl implements RideShareService{
             double distanceCovered=CalcuationUtility.getDistance(rider.getxCoordinate(),rider.getyCoordinate(),x,y);
             ride.setAmount(CalcuationUtility.calculateAmount(distanceCovered,timeTaken));
 
+            //rideMap.remove(rideId);
             System.out.println("RIDE_STOPPED "+ride.getId());
         }
         return Optional.of(new Ride());

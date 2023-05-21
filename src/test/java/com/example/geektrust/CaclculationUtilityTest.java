@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 public class CaclculationUtilityTest {
     @Test
     void calculateFeeTest(){
-        double distance = CalcuationUtility.getDistance(0, 0, 4, 5);
-        double totalAmout = CalcuationUtility.calculateAmount(distance, 32);
-        Assert.assertEquals(186.72,totalAmout);
+        double distance = CalcuationUtility.getDistance(2, 7, 4, 15);
+        double totalAmout = CalcuationUtility.calculateAmount(distance, 60);
+        Assert.assertEquals(268.36,totalAmout);
     }
     @Test
     void getDistanceTest(){
