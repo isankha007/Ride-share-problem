@@ -7,6 +7,7 @@ import com.example.geektrust.utility.CommandParams;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
         /*
          A base fare of ₹50 is charged for every ride.
@@ -23,11 +24,11 @@ public interface RideShareService {
 
     Map<String, Driver> addDriver(List<String> token);
 
-    Ride matchRider(List<String> token);
+    String matchRider(List<String> token);
 
-    Ride startRide(List<String> token);
+    Optional<Ride> startRide(List<String> token);
 
-    Ride stopRide(List<String> token);
+    Optional<Ride> stopRide(List<String> token);
 
     void printBill(List<String> token);
 

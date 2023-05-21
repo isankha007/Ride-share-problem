@@ -1,9 +1,11 @@
 package com.example.geektrust.service;
 
 import com.example.geektrust.constants.CommandTypes;
+import com.example.geektrust.constants.RideStatus;
 import com.example.geektrust.entity.Driver;
 import com.example.geektrust.entity.Ride;
 import com.example.geektrust.entity.Rider;
+import com.example.geektrust.exception.IdNotFoundException;
 import com.example.geektrust.utility.CalcuationUtility;
 import com.example.geektrust.utility.CommandParams;
 import org.slf4j.Logger;
@@ -90,30 +92,75 @@ public class RideServiceImpl implements RideShareService{
     }
 
     @Override
-    public Ride matchRider(List<String> token) {
+    public String matchRider(List<String> token) {
        // System.out.println(token);
+        StringBuilder outputSb=new StringBuilder();
         if(riderMap.containsKey(token.get(0))){
             Rider tempRider=riderMap.get(token.get(0));
             if(!tempRider.isRiding()){
                 matchedDriverMap.clear();
                 driverMap.forEach((s, driver) -> driverMatched(tempRider,driver));
+
                 if(matchedDriverMap.size()>0){
                     System.out.print("DRIVERS_MATCHED  ");
-                    matchedDriverMap.forEach((s, driver) -> System.out.print(driver+" "));
+                    matchedDriverMap.forEach((s, driver) -> {
+                        outputSb.append(driver+" ");
+                       // System.out.print(driver+" ");
+                    });
+                }else{
+                    outputSb.append("NO_DRIVERS_AVAILABLE");
+                   // System.out.println("NO_DRIVERS_AVAILABLE");
                 }
+                System.out.println(outputSb.toString().trim());
+
+            }else{
+                throw new IdNotFoundException("Rider Id Not found");
             }
+
         }
-        return null;
+        return outputSb.toString().trim();
     }
 
     @Override
-    public Ride startRide(List<String> token) {
-        return null;
+    public Optional<Ride> startRide(List<String> token) {
+        String rideId=token.get(0);
+        int nthDriver= Integer.parseInt(token.get(1));
+        String riderId=token.get(2);
+        StringBuilder sbOutput=new StringBuilder();
+        if(matchedDriverMap.size()<nthDriver){
+            System.out.println("Driver is not available");
+            return null;
+        } else if (rideMap.containsKey(rideId)) {
+            System.out.println("INVALID_RIDE");
+        }else{
+            Ride ride=new Ride();
+            Rider rider = riderMap.get(riderId);
+            if(rider.isRiding())return  Optional.of(new Ride());
+            rider.setRiding(true);
+            String nthDeriverId = matchedDriverMap.values().stream().skip(nthDriver - 1).findFirst().get();
+            System.out.println(nthDeriverId+" "+driverMap);
+            Driver driver = driverMap.get(nthDeriverId);
+            driver.setAvailable(false);
+            driverMap.put(String.valueOf(nthDeriverId),driver);
+            ride.setId(rideId);
+            ride.setRideStatus(RideStatus.RIDE_STARTED);
+            rideMap.put(rideId,ride);
+            System.out.println("RIDE_STARTED "+ride.getId());
+        }
+        return Optional.of(new Ride());
     }
 
     @Override
-    public Ride stopRide(List<String> token) {
-        return null;
+    public Optional<Ride> stopRide(List<String> token) {
+        String rideId=token.get(0);
+        int x= Integer.parseInt(token.get(1));
+        int y= Integer.parseInt(token.get(2));
+        long timeTaken= Long.parseLong(token.get(3));
+        if(!rideMap.containsKey(rideId)){
+            System.out.println("INVALID_RIDE");
+            return Optional.of(new Ride());
+        }
+        return Optional.of(new Ride());
     }
 
     @Override
@@ -126,8 +173,8 @@ public class RideServiceImpl implements RideShareService{
         double distance = CalcuationUtility.getDistance(rider.getxCoordinate(), rider.getyCoordinate()
                 , driver.getxCoordinate(), driver.getyCoordinate());
 
-        if(distance<allowedDistance){
-           // System.out.println(rider+" === "+driver+" === "+distance);
+        if(distance<=allowedDistance){
+            //System.out.println(rider+" === "+driver+" === "+distance);
             matchedDriverMap.put(distance,driver.getId());
             return true;
         }
