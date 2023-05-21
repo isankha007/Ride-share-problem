@@ -11,6 +11,41 @@ public class Ride {
 
     private Driver driver;
 
+    private Integer xCoordinate;
+
+    private Integer yCoordinate;
+
+    public Integer getxCoordinate() {
+        return xCoordinate;
+    }
+
+    public void setxCoordinate(Integer xCoordinate) {
+        this.xCoordinate = xCoordinate;
+    }
+
+    public Integer getyCoordinate() {
+        return yCoordinate;
+    }
+
+    public void setyCoordinate(Integer yCoordinate) {
+        this.yCoordinate = yCoordinate;
+    }
+
+    public Integer getTimeTaken() {
+        return timeTaken;
+    }
+
+    public void setTimeTaken(Integer timeTaken) {
+        this.timeTaken = timeTaken;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 
     private Integer timeTaken;
 

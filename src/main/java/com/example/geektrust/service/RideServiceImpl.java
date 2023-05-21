@@ -20,7 +20,7 @@ public class RideServiceImpl implements RideShareService{
 
     private Map<String,Rider> riderMap=new HashMap<>();
 
-    private SortedMap<Double,String> matchedDriverMap=new TreeMap<>();
+    //private SortedMap<Double,String> matchedDriverMap=new TreeMap<>();
 
 
     public Map<String, Driver> getDriverMap() {
@@ -98,12 +98,12 @@ public class RideServiceImpl implements RideShareService{
         if(riderMap.containsKey(token.get(0))){
             Rider tempRider=riderMap.get(token.get(0));
             if(!tempRider.isRiding()){
-                matchedDriverMap.clear();
+                //matchedDriverMap.clear();
                 driverMap.forEach((s, driver) -> driverMatched(tempRider,driver));
 
-                if(matchedDriverMap.size()>0){
-                    System.out.print("DRIVERS_MATCHED  ");
-                    matchedDriverMap.forEach((s, driver) -> {
+                if(tempRider.getMatchedDriverMap().size()>0){
+                    System.out.print("DRIVERS_MATCHED ");
+                    tempRider.getMatchedDriverMap().forEach((s, driver) -> {
                         outputSb.append(driver+" ");
                        // System.out.print(driver+" ");
                     });
@@ -127,25 +127,28 @@ public class RideServiceImpl implements RideShareService{
         int nthDriver= Integer.parseInt(token.get(1));
         String riderId=token.get(2);
         StringBuilder sbOutput=new StringBuilder();
-        if(matchedDriverMap.size()<nthDriver){
+        Rider rider = riderMap.get(riderId);
+        if(rider.getMatchedDriverMap().size()<nthDriver){
             System.out.println("Driver is not available");
-            return null;
+            return Optional.of(new Ride());
         } else if (rideMap.containsKey(rideId)) {
             System.out.println("INVALID_RIDE");
         }else{
             Ride ride=new Ride();
-            Rider rider = riderMap.get(riderId);
             if(rider.isRiding())return  Optional.of(new Ride());
             rider.setRiding(true);
-            String nthDeriverId = matchedDriverMap.values().stream().skip(nthDriver - 1).findFirst().get();
-            System.out.println(nthDeriverId+" "+driverMap);
+            String nthDeriverId = rider.getMatchedDriverMap().values().stream().skip(nthDriver-1).findFirst().get();
+            //System.out.println(nthDeriverId+" "+matchedDriverMap+" N value "+nthDriver);
             Driver driver = driverMap.get(nthDeriverId);
             driver.setAvailable(false);
             driverMap.put(String.valueOf(nthDeriverId),driver);
             ride.setId(rideId);
-            ride.setRideStatus(RideStatus.RIDE_STARTED);
+            ride.setRider(rider);
+            ride.setDriver(driver);
+            ride.setRideStatus(RideStatus.RIDE_NOT_COMPLETED);
             rideMap.put(rideId,ride);
             System.out.println("RIDE_STARTED "+ride.getId());
+            return Optional.of(ride);
         }
         return Optional.of(new Ride());
     }
@@ -155,17 +158,50 @@ public class RideServiceImpl implements RideShareService{
         String rideId=token.get(0);
         int x= Integer.parseInt(token.get(1));
         int y= Integer.parseInt(token.get(2));
-        long timeTaken= Long.parseLong(token.get(3));
+        Integer timeTaken= Integer.valueOf((token.get(3)));
+        StringBuilder sbOutput=new StringBuilder();
         if(!rideMap.containsKey(rideId)){
             System.out.println("INVALID_RIDE");
             return Optional.of(new Ride());
+        }else {
+            Ride ride = rideMap.get(rideId);
+            ride.setRideStatus(RideStatus.RIDE_STOPPED);
+            ride.setxCoordinate(x);
+            ride.setyCoordinate(y);
+            ride.setTimeTaken(timeTaken);
+
+
+            Rider rider = riderMap.get(ride.getRider().getId());
+            rider.setRiding(false);
+            riderMap.put(rider.getId(),rider);
+
+            Driver driver = driverMap.get(ride.getDriver().getId());
+            driver.setAvailable(true);
+            driverMap.put(driver.getId(),driver);
+            double distanceCovered=CalcuationUtility.getDistance(rider.getxCoordinate(),rider.getyCoordinate(),x,y);
+            ride.setAmount(CalcuationUtility.calculateAmount(distanceCovered,timeTaken));
+
+            System.out.println("RIDE_STOPPED "+ride.getId());
         }
         return Optional.of(new Ride());
     }
 
     @Override
-    public void printBill(List<String> token) {
-
+    public String printBill(List<String> token) {
+        String rideId=token.get(0);
+        StringBuilder sbOutput=new StringBuilder();
+        if(!rideMap.containsKey(rideId)){
+            System.out.println("INVALID_RIDE");
+        } else if (rideMap.get(rideId).getRideStatus().equals(RideStatus.RIDE_NOT_COMPLETED)) {
+            System.out.println("RIDE_NOT_COMPLETED");
+        }
+        else{
+            Ride ride = rideMap.get(rideId);
+           // System.out.println("BILL "+ride.getId()+" "+String.format("%.2f",ride.getAmount()));
+            sbOutput.append("BILL "+ride.getId()+" "+ride.getDriver().getId()+" "+String.format("%.2f",ride.getAmount()));
+            System.out.println(sbOutput.toString());
+        }
+        return sbOutput.toString();
     }
 
     public boolean driverMatched(Rider rider,Driver driver){
@@ -175,7 +211,9 @@ public class RideServiceImpl implements RideShareService{
 
         if(distance<=allowedDistance){
             //System.out.println(rider+" === "+driver+" === "+distance);
+            SortedMap<Double, String> matchedDriverMap = rider.getMatchedDriverMap();
             matchedDriverMap.put(distance,driver.getId());
+            rider.setMatchedDriverMap(matchedDriverMap);
             return true;
         }
         return false;

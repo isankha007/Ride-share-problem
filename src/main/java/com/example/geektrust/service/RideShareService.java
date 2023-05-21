@@ -9,12 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-        /*
-         A base fare of ₹50 is charged for every ride.
-         An additional ₹6.5 is charged for every kilometer traveled.
-         An additional ₹2 is charged for every minute spent in the ride.
-         A service tax of 20% is added to the final amount.
-         */
+
 
 public interface RideShareService {
     int allowedDistance=5;
@@ -30,7 +25,7 @@ public interface RideShareService {
 
     Optional<Ride> stopRide(List<String> token);
 
-    void printBill(List<String> token);
+    String printBill(List<String> token);
 
 
 }

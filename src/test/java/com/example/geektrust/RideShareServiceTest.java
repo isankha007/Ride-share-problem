@@ -54,4 +54,46 @@ public class RideShareServiceTest {
          Assert.assertEquals("D1 D2",outputstr);
     }
 
+
+    @Test
+    void startRideTest(){
+        List<String>  token= Arrays.asList("RIDE-001","1","R1");
+        rideShareService.addRider(Arrays.asList("R1","1","1"));
+        rideShareService.addDriver(Arrays.asList("D1","1","1"));
+        rideShareService.addDriver(Arrays.asList("D2","1","1"));
+        rideShareService.addDriver(Arrays.asList("D3","1","1"));
+
+        List<String>  matchToken= Arrays.asList("R1");
+
+        String outputstr = rideShareService.matchRider(matchToken);
+       // System.out.println("==="+outputstr);
+
+        Optional<Ride> ride = rideShareService.startRide(token);
+        Assert.assertEquals("RIDE-001",ride.get().getId());
+    }
+
+    @Test
+    void printBillTest(){
+        List<String>  token= Arrays.asList("RIDE-001","1","R1");
+        rideShareService.addRider(Arrays.asList("R1","3","5"));
+        rideShareService.addDriver(Arrays.asList("D1","2","3"));
+        rideShareService.addDriver(Arrays.asList("D2","0","1"));
+        rideShareService.addDriver(Arrays.asList("D3","4","2"));
+
+        List<String>  matchToken= Arrays.asList("R1");
+
+        String outputstr = rideShareService.matchRider(matchToken);
+        System.out.println("==="+outputstr);
+
+        Optional<Ride> ride = rideShareService.startRide(token);
+
+        List<String>  stopRideToken= Arrays.asList("RIDE-001","10","2","48");
+        rideShareService.stopRide(stopRideToken);
+
+        List<String>  billToken= Arrays.asList("RIDE-001");
+
+        String printedBill = rideShareService.printBill(billToken);
+        Assert.assertEquals("BILL RIDE-001 D1 234.64",printedBill);
+    }
+
 }
