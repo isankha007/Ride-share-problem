@@ -45,13 +45,18 @@ public class RideShareServiceTest {
 
     @Test
     void matchRiderTest(){
-        List<String>  token= Arrays.asList("R1");
-        rideShareService.addRider(Arrays.asList("R1","1","1"));
-        rideShareService.addDriver(Arrays.asList("D1","1","1"));
-        rideShareService.addDriver(Arrays.asList("D2","4","1"));
 
+        rideShareService.addRider(Arrays.asList("R1","2","7"));
+        List<String>  token= Arrays.asList("R1");
         String outputstr = rideShareService.matchRider(token);
-         Assert.assertEquals("D1 D2",outputstr);
+        Assert.assertEquals("NO_DRIVERS_AVAILABLE",outputstr);
+        rideShareService.addDriver(Arrays.asList("D1","3","1"));
+        rideShareService.addDriver(Arrays.asList("D2","5","6"));
+        rideShareService.addDriver(Arrays.asList("D13","1","8"));
+        rideShareService.addDriver(Arrays.asList("D4","3","6"));
+
+        outputstr = rideShareService.matchRider(token);
+         Assert.assertEquals("D13 D4 D2",outputstr);
     }
 
 

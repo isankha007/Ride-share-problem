@@ -1,7 +1,6 @@
 package com.example.geektrust.entity;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Rider extends User{
 
@@ -11,15 +10,24 @@ public class Rider extends User{
         return isRiding;
     }
 
-    private SortedMap<Double,String> matchedDriverMap=new TreeMap<>();
+    private List<Driver> matchedDriver=new ArrayList<>();
 
-    public SortedMap<Double, String> getMatchedDriverMap() {
+    public List<Driver> getMatchedDriver() {
+        return matchedDriver;
+    }
+
+    public void setMatchedDriver(List<Driver> matchedDriver) {
+        this.matchedDriver = matchedDriver;
+    }
+    /*private LinkedHashMap<String,Integer> matchedDriverMap=new LinkedHashMap<>();
+
+    public LinkedHashMap<String, Integer> getMatchedDriverMap() {
         return matchedDriverMap;
     }
 
-    public void setMatchedDriverMap(SortedMap<Double, String> matchedDriverMap) {
+    public void setMatchedDriverMap(LinkedHashMap<String, Integer> matchedDriverMap) {
         this.matchedDriverMap = matchedDriverMap;
-    }
+    }*/
 
     public void setRiding(boolean riding) {
         isRiding = riding;

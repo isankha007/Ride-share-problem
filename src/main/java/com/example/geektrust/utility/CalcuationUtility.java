@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class CalcuationUtility {
-
+     private static final double roundOffMultiplier=100.0;
     public static double getDistance(int x1,int y1,int x2,int y2){
         //d = √[ (x2–x1)2 + (y2–y1)2]
         double distance= Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
@@ -24,8 +24,8 @@ public class CalcuationUtility {
     public static double calculateAmount(double distance,int timeTaken){
         //d = √[ (x2–x1)2 + (y2–y1)2]
         //double totalRideDistance =getDistance(x1,y1,x2,y2);
-        double amount=FareList.BASE_FARE+(distance*6.5)+(timeTaken*2);
-        amount=amount+(amount*.2);
+        double amount=FareList.BASE_FARE+(distance*FareList.ADDITIONAL_FARE_PER_KM)+(timeTaken*FareList.ADDITIONAL_FARE_PER_MIN);
+        amount=amount+(amount*FareList.SERVICE_TAX_MULTIPLIER);
 
 //        DecimalFormat df_obj = new DecimalFormat("#.###");
 //
@@ -34,7 +34,7 @@ public class CalcuationUtility {
 //        df_obj.setRoundingMode(RoundingMode.FLOOR);
 //        String formatStr = df_obj.format(amount);
 //        System.out.println("Format +++ %0.2f "+formatStr+" "+Math.round(amount * 100.0) / 100.0);
-        return Math.round(amount * 100.0) / 100.0;
+        return Math.round(amount * roundOffMultiplier) / roundOffMultiplier;
     }
 
 }

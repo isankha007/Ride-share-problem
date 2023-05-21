@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RideServiceImpl implements RideShareService{
     //private static final Logger LOGGER= LoggerFactory.getLogger(RideServiceImpl.class);
@@ -98,15 +99,27 @@ public class RideServiceImpl implements RideShareService{
         if(riderMap.containsKey(token.get(0))){
             Rider tempRider=riderMap.get(token.get(0));
             if(!tempRider.isRiding()){
-                //matchedDriverMap.clear();
+                tempRider.getMatchedDriver().clear();
                 driverMap.forEach((s, driver) -> driverMatched(tempRider,driver));
-
-                if(tempRider.getMatchedDriverMap().size()>0){
+                //System.out.println(driverMap+"----"+tempRider.getMatchedDriverMap());
+                if(tempRider.getMatchedDriver().size()>0){
                     System.out.print("DRIVERS_MATCHED ");
-                    tempRider.getMatchedDriverMap().forEach((s, driver) -> {
-                        outputSb.append(driver+" ");
+                   /* LinkedHashMap<String, Integer> matchMap = tempRider.getMatchedDriverMap().entrySet().stream()
+                            .sorted((o1, o2) -> (o1.getValue().compareTo(o2.getValue())))
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    Map.Entry::getValue,
+                                    (e1, e2) -> e1, LinkedHashMap::new
+                            ));*/
+                    Comparator<Driver> driverComparator=Comparator.comparing(Driver::getDistanceFromRider)
+                            .thenComparing(Driver::getId);
+
+                    tempRider.getMatchedDriver().sort(driverComparator);
+
+                    tempRider.getMatchedDriver().forEach(driver ->
+                            outputSb.append(driver.getId()+" ")
                        // System.out.print(driver+" ");
-                    });
+                    );
                 }else{
                     outputSb.append("NO_DRIVERS_AVAILABLE");
                    // System.out.println("NO_DRIVERS_AVAILABLE");
@@ -128,8 +141,8 @@ public class RideServiceImpl implements RideShareService{
         String riderId=token.get(2);
         StringBuilder sbOutput=new StringBuilder();
         Rider rider = riderMap.get(riderId);
-        if(rider.getMatchedDriverMap().size()<nthDriver){
-            System.out.println("Driver is not available");
+        if(rider.getMatchedDriver().size()<nthDriver){
+            System.out.println("INVALID_RIDE");
             return Optional.of(new Ride());
         } else if (rideMap.containsKey(rideId)) {
             System.out.println("INVALID_RIDE");
@@ -137,8 +150,8 @@ public class RideServiceImpl implements RideShareService{
             Ride ride=new Ride();
             if(rider.isRiding())return  Optional.of(new Ride());
             rider.setRiding(true);
-            String nthDeriverId = rider.getMatchedDriverMap().values().stream().skip(nthDriver-1).findFirst().get();
-            //System.out.println(nthDeriverId+" "+matchedDriverMap+" N value "+nthDriver);
+            String nthDeriverId = rider.getMatchedDriver().get(nthDriver-1).getId(); //rider.getMatchedDriverMap().entrySet().stream().skip(nthDriver-1).toString();
+            //System.out.println(nthDeriverId+" "+rider.getMatchedDriver()+" N value "+nthDriver);
             Driver driver = driverMap.get(nthDeriverId);
             driver.setAvailable(false);
             driverMap.put(String.valueOf(nthDeriverId),driver);
@@ -210,10 +223,11 @@ public class RideServiceImpl implements RideShareService{
                 , driver.getxCoordinate(), driver.getyCoordinate());
 
         if(distance<=allowedDistance){
-            //System.out.println(rider+" === "+driver+" === "+distance);
-            SortedMap<Double, String> matchedDriverMap = rider.getMatchedDriverMap();
-            matchedDriverMap.put(distance,driver.getId());
-            rider.setMatchedDriverMap(matchedDriverMap);
+           // System.out.println(rider+" === "+driver+" === "+distance);
+            List<Driver> matchedDrivers = rider.getMatchedDriver();
+            driver.setDistanceFromRider(distance);
+            matchedDrivers.add(driver);
+          //  rider.setMatchedDriverMap(matchedDriverMap);
             return true;
         }
         return false;
