@@ -11,7 +11,7 @@ public class Driver extends User{
         return distanceFromRider;
     }
 
-    public void setDistanceFromRider(double distanceFromRider) {
+    public void updateDistanceFromRider(double distanceFromRider) {
         this.distanceFromRider = distanceFromRider;
     }
 
@@ -19,11 +19,14 @@ public class Driver extends User{
         super(id, xCoordinate, yCoordinate);
     }
 
+
+
+
     public boolean isAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(boolean available) {
+    public void updateIsAvailable(boolean available) {
         isAvailable = available;
     }
 

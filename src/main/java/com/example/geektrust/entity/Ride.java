@@ -19,17 +19,17 @@ public class Ride {
         return xCoordinate;
     }
 
-    public void setxCoordinate(Integer xCoordinate) {
+   /* public void setxCoordinate(Integer xCoordinate) {
         this.xCoordinate = xCoordinate;
-    }
+    }*/
 
     public Integer getyCoordinate() {
         return yCoordinate;
     }
 
-    public void setyCoordinate(Integer yCoordinate) {
+   /* public void setyCoordinate(Integer yCoordinate) {
         this.yCoordinate = yCoordinate;
-    }
+    }*/
 
     public Integer getTimeTaken() {
         return timeTaken;
@@ -54,19 +54,27 @@ public class Ride {
     public Ride() {
     }
 
+    public Ride(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+  /*  public void setId(String id) {
         this.id = id;
-    }
+    }*/
 
     public RideStatus getRideStatus() {
         return rideStatus;
     }
 
-    public void setRideStatus(RideStatus rideStatus) {
+   /* public void setRideStatus(RideStatus rideStatus) {
+        this.rideStatus = rideStatus;
+    }*/
+
+    public void changeRideStatus(RideStatus rideStatus) {
         this.rideStatus = rideStatus;
     }
 
@@ -74,7 +82,11 @@ public class Ride {
         return rider;
     }
 
-    public void setRider(Rider rider) {
+   /* public void setRider(Rider rider) {
+        this.rider = rider;
+    }*/
+
+    public void addRideRider(Rider rider) {
         this.rider = rider;
     }
 
@@ -82,7 +94,16 @@ public class Ride {
         return driver;
     }
 
-    public void setDriver(Driver driver) {
+  /*  public void setDriver(Driver driver) {
         this.driver = driver;
+    }*/
+
+    public void addRideDriver(Driver driver){
+        this.driver = driver;
+    }
+
+    public void setCoordinates(int x,int y){
+            this.xCoordinate=x;
+            this.yCoordinate=y;
     }
 }

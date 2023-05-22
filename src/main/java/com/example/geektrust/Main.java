@@ -5,7 +5,6 @@ import com.example.geektrust.service.RideShareService;
 import com.example.geektrust.utility.CommandParams;
 import com.example.geektrust.utility.FileReaderUtility;
 
-import java.io.IOException;
 import java.util.List;
 
 public class Main {
